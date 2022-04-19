@@ -1,8 +1,6 @@
 # tf2helm
 
-`t2helm` is a simple Python utility that converts a Terraform module to a Helm Chart. The Helm Chart contains a Kubernetes Custom Resource understood and managed by the [Terraform Operator]() but `tf2helm` will soon be extended to support other similar operators.
-
-![Alt Convert terraform module to a Helm chart](images/tf2helm.gif)
+`t2helm` is a simple Python utility that converts a Terraform module to a Helm Chart. The Helm Chart contains a Kubernetes Custom Resource understood and managed by the [Terraform Operator](https://github.com/isaaguilar/terraform-operator) but `tf2helm` will soon be extended to support other similar operators.
 
 ## Usage
 ```
