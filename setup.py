@@ -1,9 +1,6 @@
 #!/usr/bin/env python
-from os.path import abspath, dirname, join
-from distutils.core import setup
 
-setup_dir = abspath(dirname(__file__))
-install_requires = open(join(setup_dir, 'requirements.txt')).readlines()
+from distutils.core import setup
 
 setup(
     name='tf2helm',
@@ -13,7 +10,7 @@ setup(
     author='Mohammud Yassine Jaffoo',
     author_email='yassine.jaffoo@jaffoosolutions.com',
     url='https://github.com/appvia/tf2helm',
-    install_requires=install_requires,
+    install_requires=['python-hcl2', 'avionix', 'requests', 'jinja2', 'fire', 'halo'],
     keywords = ['terraform', 'helm', 'kubernetes', 'self-service', 'cloud', 'aws', 'azure', 'gcp'],
     classifiers=[
         "Development Status :: 3 - Alpha",
