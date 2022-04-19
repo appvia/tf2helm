@@ -1,6 +1,0 @@
-python-hcl2
-avionix
-requests
-jinja2
-fire
-halo
