@@ -1,0 +1,28 @@
+apiVersion: tf.isaaguilar.com/v1alpha1
+kind: Terraform
+metadata:
+  name: {{'{{ .Release.Name }}'}}
+  labels:
+    {{'{{- include "custom-resource.labels" . | nindent 4 }}'}}
+spec:
+  terraformVersion: {{ tf_config['tf_version'] }}
+  terraformRunnerPullPolicy: IfNotPresent
+  terraformModule: {{ tf_config['tf_module'] }}?ref={{ tf_config['tf_module_version'] }}
+  ignoreDelete: false
+  credentials: {}
+  env:
+{%- for k in config %}
+{%- set name = "TF_VAR_" + k %}
+{%- set value = ".Values." + k %}
+  - name: {{ name }}
+    value: {{ '{{' }} {{ value }} {{ '}}' }}
+{%- endfor %}
+  outputsSecret: "{{'{{ .Release.Name }}'}}-outputs"
+  customBackend: |-
+    terraform {
+      backend "kubernetes" {
+        secret_suffix    = "{{'{{ .Release.Name }}'}}"
+        in_cluster_config  = true
+        namespace = "{{'{{ .Release.Namespace }}'}}"
+      }
+    }
