@@ -18,11 +18,12 @@ config.read('config.ini')
 spinner = Halo(spinner='dots')
 
 
-def convert(tf_module, tf_module_version, tf_version, name, version, app_version, output_dir):
+def convert(tf_module, tf_module_version, tf_version, name, version, app_version, output_dir, tf_module_url=None):
     '''
     tf2helm converts a Terraform module to a Helm Chart [currently only supports the Terraform Operator]
 
-    :param tf_module: absolute or relative path to a Terraform module
+    :param tf_module: absolute or relative path or URL to a Terraform module
+    :param tf_module_url: specify this if tf_module does not point to a URL
     :param tf_module_version: terraform module version
     :param tf_version: terraform version used for creating the resources
     :param name: helm chart name
@@ -31,22 +32,23 @@ def convert(tf_module, tf_module_version, tf_version, name, version, app_version
     :param output_dir: absolute or relative path to where the Helm chart will be created
     '''
     tf_config = {}
-    tf_config['tf_module'] = tf_module
     tf_config['tf_module_version'] = tf_module_version
     tf_config['tf_version'] = tf_version
 
     try:
+        spinner.start(config.get('stages', 'setup'))
+        time.sleep(1)
         if tf_module.startswith('https://'):
-            spinner.start(config.get('stages', 'setup'))
-            time.sleep(1)
+            tf_config['tf_module'] = tf_module
             tf_module = filehandler.download_tf_module(
                 tf_module, tf_module_version, '.modules')
-            spinner.succeed()
-
+            tf_module = '.modules/' + tf_module
+        elif not tf_module.startswith('https://'):
+            tf_config['tf_module'] = tf_module_url
+        spinner.succeed()
         spinner.start(config.get('stages', 'translate'))
         time.sleep(1)
-        required_tf_vars, optional_tf_vars = tfparser.get_tf_vars(
-            '.modules/' + tf_module)
+        required_tf_vars, optional_tf_vars = tfparser.get_tf_vars(tf_module)
         spinner.succeed()
         spinner.start(config.get('stages', 'create'))
         time.sleep(1)
@@ -59,7 +61,7 @@ def convert(tf_module, tf_module_version, tf_version, name, version, app_version
         spinner.succeed()
         spinner.start(config.get('stages', 'update'))
         time.sleep(1)
-        filehandler.render_template('tf_operator.yaml.j2', required_tf_vars, tf_config,
+        filehandler.render_template('tf_operator.yaml.j2', dict, tf_config,
                                     output_dir + '/' + name + '/templates/' + name + '.yaml')
         filehandler.copy_file(
             'files/_helpers.tpl', output_dir + '/' + name + '/templates/')

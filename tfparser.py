@@ -57,8 +57,8 @@ def get_tf_vars(module):
     Returns:
         A list of terraform variables that require appropriate values to be assigned to them
     """
-    required_tf_vars = {}
-    optional_tf_vars = {}
+    required_tf_vars = {'required': {}}
+    optional_tf_vars = {'optional': {}}
     for f in get_tf_files(module):
         with open(f, 'r') as file:
             dict = hcl2.load(file)
@@ -68,20 +68,20 @@ def get_tf_vars(module):
                         if 'default' not in var.get(k):
                             v = does_tf_var_have_a_val(module, k)
                             if v is None:
-                                required_tf_vars[k] = ""
+                                required_tf_vars['required'][k] = ""
                             else:
-                                optional_tf_vars[k] = v
+                                optional_tf_vars['optional'][k] = v
                         elif 'default' in var.get(k):
                             if var.get(k)['default'] in ("", {}, [], None):
                                 v = does_tf_var_have_a_val(module, k)
                                 if v is None:
-                                    required_tf_vars[k] = ""
+                                    required_tf_vars['required'][k] = ""
                                 else:
-                                    optional_tf_vars[k] = v
+                                    optional_tf_vars['optional'][k] = v
                             elif not var.get(k)['default'] in ("", {}, []):
                                 v = does_tf_var_have_a_val(module, k)
                                 if v is None:
-                                    optional_tf_vars[k] = var.get(k)['default']
+                                    optional_tf_vars['optional'][k] = var.get(k)['default']
                                 else:
-                                    optional_tf_vars[k] = v
+                                    optional_tf_vars['optional'][k] = v
     return required_tf_vars, optional_tf_vars

@@ -11,9 +11,15 @@ spec:
   ignoreDelete: false
   credentials: {}
   env:
-{%- for k in config %}
+{%- for k in config['required'] %}
 {%- set name = "TF_VAR_" + k %}
-{%- set value = ".Values." + k %}
+{%- set value = ".Values.required." + k %}
+  - name: {{ name }}
+    value: {{ '{{' }} {{ value }} {{ '}}' }}
+{%- endfor %}
+{%- for k in config['optional'] %}
+{%- set name = "TF_VAR_" + k %}
+{%- set value = ".Values.optional." + k %}
   - name: {{ name }}
     value: {{ '{{' }} {{ value }} {{ '}}' }}
 {%- endfor %}
