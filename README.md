@@ -6,6 +6,29 @@
 
 This gives infrastructure operators e.g. DevOps or Platform engineers the flexibility to set sensible default parameters for cloud resources and make them visible and configurable to application developers who may or may not override them afterwards.
 
-## Usage
+## Installation
 
-![Alt convert the terraform module for AWS S3 bucket to a Helm Chart](images/tf2helm.gif)
+```
+pip install tf2helm
+```
+
+## Usage
+```
+$ tf2helm --help
+Usage: tf2helm [OPTIONS]
+
+  tf2helm converts a Terraform module to a Helm Chart [currently only supports
+  the Terraform Operator]
+
+
+Options:
+  --tf_module TEXT          Path or URL to a Terraform module.
+  --tf_module_url TEXT      Specify this if tf_module does not point to a URL.
+  --tf_module_version TEXT  Terraform module version.
+  --tf_version TEXT         Terraform version.
+  --name TEXT               Helm chart name.
+  --version TEXT            Helm chart version.
+  --app_version TEXT        Helm chart application version.
+  --output_dir TEXT         Path to the Helm chart output directory.
+  --help                    Show this message and exit.
+```

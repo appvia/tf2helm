@@ -6,37 +6,33 @@ import json
 import yaml
 import os
 import time
-import configparser
-import fire
+import click
+import pkg_resources
 from avionix import ChartBuilder, ChartInfo, Values
 from avionix.kube.base_objects import KubernetesBaseObject
 from halo import Halo
 
 
-config = configparser.ConfigParser()
-config.read('config.ini')
 spinner = Halo(spinner='dots')
 
 
-def convert(tf_module, tf_module_version, tf_version, name, version, app_version, output_dir, tf_module_url=None):
-    '''
-    tf2helm converts a Terraform module to a Helm Chart [currently only supports the Terraform Operator]
-
-    :param tf_module: absolute or relative path or URL to a Terraform module
-    :param tf_module_url: specify this if tf_module does not point to a URL
-    :param tf_module_version: terraform module version
-    :param tf_version: terraform version used for creating the resources
-    :param name: helm chart name
-    :param version: helm chart version
-    :param app_version: helm chart application version
-    :param output_dir: absolute or relative path to where the Helm chart will be created
-    '''
+@click.command()
+@click.option('--tf_module', help='Path or URL to a Terraform module.')
+@click.option('--tf_module_url', default=None, help='Specify this if tf_module does not point to a URL.')
+@click.option('--tf_module_version', help='Terraform module version.')
+@click.option('--tf_version', help='Terraform version.')
+@click.option('--name', help='Helm chart name.')
+@click.option('--version', help='Helm chart version.')
+@click.option('--app_version', help='Helm chart application version.')
+@click.option('--output_dir', help='Path to the Helm chart output directory.')
+def main(tf_module, tf_module_version, tf_version, name, version, app_version, output_dir, tf_module_url):
+    """tf2helm converts a Terraform module to a Helm Chart [currently only supports the Terraform Operator]"""
     tf_config = {}
     tf_config['tf_module_version'] = tf_module_version
     tf_config['tf_version'] = tf_version
 
     try:
-        spinner.start(config.get('stages', 'setup'))
+        spinner.start('Download Terraform module')
         time.sleep(1)
         if tf_module.startswith('https://'):
             tf_config['tf_module'] = tf_module
@@ -46,11 +42,11 @@ def convert(tf_module, tf_module_version, tf_version, name, version, app_version
         elif not tf_module.startswith('https://'):
             tf_config['tf_module'] = tf_module_url
         spinner.succeed()
-        spinner.start(config.get('stages', 'translate'))
+        spinner.start('Translate Terraform module')
         time.sleep(1)
         required_tf_vars, optional_tf_vars = tfparser.get_tf_vars(tf_module)
         spinner.succeed()
-        spinner.start(config.get('stages', 'create'))
+        spinner.start('Create Helm Chart')
         time.sleep(1)
         dict = {**required_tf_vars, **optional_tf_vars}
         values = Values(dict)
@@ -59,12 +55,12 @@ def convert(tf_module, tf_module_version, tf_version, name, version, app_version
                                output_directory=output_dir)
         builder.generate_chart()
         spinner.succeed()
-        spinner.start(config.get('stages', 'update'))
+        spinner.start('Update Helm Chart with Terraform Custom Resource')
         time.sleep(1)
         filehandler.render_template('tf_operator.yaml.j2', dict, tf_config,
                                     output_dir + '/' + name + '/templates/' + name + '.yaml')
-        filehandler.copy_file(
-            'files/_helpers.tpl', output_dir + '/' + name + '/templates/')
+        filehandler.copy_file(pkg_resources.resource_filename(
+            'tf2helm', 'files/_helpers.tpl'), output_dir + '/' + name + '/templates/')
         spinner.succeed()
         spinner.stop_and_persist(symbol='🚀'.encode(
             'utf-8'), text="Helm Chart is available at %s/%s" % (output_dir, name))
@@ -73,7 +69,4 @@ def convert(tf_module, tf_module_version, tf_version, name, version, app_version
 
 
 if __name__ == '__main__':
-    fire.core.Display = lambda lines, out: print(*lines, file=out)
-    fire.Fire({
-        'convert': convert
-    })
+    main()

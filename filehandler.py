@@ -4,6 +4,7 @@ import os
 import shutil
 import requests
 import zipfile
+import pkg_resources
 from jinja2 import Environment, FileSystemLoader
 from io import BytesIO
 
@@ -16,7 +17,8 @@ def render_template(filename, config, tf_config, chart_filename):
         config: a set of configuration used to render the template
         chart_filename: an absolute or relative path to the rendered file in the Helm Chart directory
     """
-    file_loader = FileSystemLoader('templates')
+    file_loader = FileSystemLoader(
+        pkg_resources.resource_filename('tf2helm', 'templates/'))
     env = Environment(loader=file_loader)
     template = env.get_template(filename)
     custom_resource = template.render(config=config, tf_config=tf_config)
