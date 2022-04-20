@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
-import tfparser
-import filehandler
+from tf2helm import tfparser, filehandler
 import json
 import yaml
 import os
 import time
 import click
-import pkg_resources
 from avionix import ChartBuilder, ChartInfo, Values
 from avionix.kube.base_objects import KubernetesBaseObject
 from halo import Halo
@@ -59,8 +57,9 @@ def main(tf_module, tf_module_version, tf_version, name, version, app_version, o
         time.sleep(1)
         filehandler.render_template('tf_operator.yaml.j2', dict, tf_config,
                                     output_dir + '/' + name + '/templates/' + name + '.yaml')
-        filehandler.copy_file(pkg_resources.resource_filename(
-            'tf2helm', 'files/_helpers.tpl'), output_dir + '/' + name + '/templates/')
+        tpl = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "files", "_helpers.tpl")
+        filehandler.copy_file(tpl, output_dir + '/' + name + '/templates/')
         spinner.succeed()
         spinner.stop_and_persist(symbol='🚀'.encode(
             'utf-8'), text="Helm Chart is available at %s/%s" % (output_dir, name))
