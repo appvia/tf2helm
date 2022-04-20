@@ -1,4 +1,4 @@
 __pycache__/*
-.modules/*
+**/.modules/*
 tf2helm.egg-info/*
 dist/*
