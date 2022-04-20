@@ -55,33 +55,25 @@ def get_tf_vars(module):
     Arguments:
         module: an absolute or relative path to a terraform module
     Returns:
-        A list of terraform variables that require appropriate values to be assigned to them
+        A dictionary containing a set of dictionaries with required and optional terraform variables and their default values
     """
-    required_tf_vars = {'required': {}}
-    optional_tf_vars = {'optional': {}}
+    tf_vars = {'required': {}, 'optional': {}}
     for f in get_tf_files(module):
         with open(f, 'r') as file:
             dict = hcl2.load(file)
             if 'variable' in dict:
                 for var in dict['variable']:
                     for k in var:
-                        if 'default' not in var.get(k):
+                        if 'default' in var.get(k):
                             v = does_tf_var_have_a_val(module, k)
                             if v is None:
-                                required_tf_vars['required'][k] = ""
+                                tf_vars['optional'][k] = var.get(k)['default']
                             else:
-                                optional_tf_vars['optional'][k] = v
-                        elif 'default' in var.get(k):
-                            if var.get(k)['default'] in ("", {}, [], None):
-                                v = does_tf_var_have_a_val(module, k)
-                                if v is None:
-                                    required_tf_vars['required'][k] = ""
-                                else:
-                                    optional_tf_vars['optional'][k] = v
-                            elif not var.get(k)['default'] in ("", {}, []):
-                                v = does_tf_var_have_a_val(module, k)
-                                if v is None:
-                                    optional_tf_vars['optional'][k] = var.get(k)['default']
-                                else:
-                                    optional_tf_vars['optional'][k] = v
-    return required_tf_vars, optional_tf_vars
+                                tf_vars['optional'][k] = v
+                        else:
+                            v = does_tf_var_have_a_val(module, k)
+                            if v is None:
+                                tf_vars['required'][k] = ""
+                            else:
+                                tf_vars['optional'][k] = v
+    return tf_vars

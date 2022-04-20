@@ -42,12 +42,11 @@ def main(tf_module, tf_module_version, tf_version, name, version, app_version, o
         spinner.succeed()
         spinner.start('Translate Terraform module')
         time.sleep(1)
-        required_tf_vars, optional_tf_vars = tfparser.get_tf_vars(tf_module)
+        tf_vars = tfparser.get_tf_vars(tf_module)
         spinner.succeed()
         spinner.start('Create Helm Chart')
         time.sleep(1)
-        dict = {**required_tf_vars, **optional_tf_vars}
-        values = Values(dict)
+        values = Values(tf_vars)
         builder = ChartBuilder(ChartInfo(api_version="v2", name=name,
                                version=version, app_version=app_version), [], values=values,
                                output_directory=output_dir)
@@ -55,7 +54,7 @@ def main(tf_module, tf_module_version, tf_version, name, version, app_version, o
         spinner.succeed()
         spinner.start('Update Helm Chart with Terraform Custom Resource')
         time.sleep(1)
-        filehandler.render_template('tf_operator.yaml.j2', dict, tf_config,
+        filehandler.render_template('tf_operator.yaml.j2', tf_vars, tf_config,
                                     output_dir + '/' + name + '/templates/' + name + '.yaml')
         tpl = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "files", "_helpers.tpl")
