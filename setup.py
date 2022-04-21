@@ -8,7 +8,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 setup(
     name = 'tf2helm',
     packages = ['tf2helm'],
-    version = '0.0.4',
+    version = '0.0.5',
     description = 'tf2helm converts a Terraform module to a Helm Chart [currently only supports the Terraform Operator]',
     long_description = long_description,
     long_description_content_type = 'text/markdown',
@@ -16,7 +16,7 @@ setup(
     author_email = 'yassine.jaffoo@jaffoosolutions.com',
     url = 'https://github.com/appvia/tf2helm',
     py_modules = ['tf2helm', 'tfparser', 'filehandler'],
-    install_requires = ['python-hcl2', 'avionix', 'requests', 'jinja2', 'halo', 'click'],
+    install_requires = ['python-hcl2', 'avionix', 'requests', 'jinja2', 'halo', 'click', 'gitpython'],
     keywords = ['terraform', 'helm', 'kubernetes', 'self-service', 'cloud', 'aws', 'azure', 'gcp'],
     classifiers = [
         "Development Status :: 3 - Alpha",

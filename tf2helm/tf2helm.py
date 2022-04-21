@@ -14,31 +14,30 @@ from halo import Halo
 spinner = Halo(spinner='dots')
 
 
-@click.command()
-@click.option('--tf_module', help='Path or URL to a Terraform module.')
-@click.option('--tf_module_url', default=None, help='Specify this if tf_module does not point to a URL.')
-@click.option('--tf_module_version', help='Terraform module version.')
+@click.command(no_args_is_help=True)
+@click.option('--tf_module_path', default=None, help='Terraform module local Path e.g. "/local/path/to/module".')
+@click.option('--tf_module_url', default=None, help='Terraform module URL e.g. "https://github.com/<org>/<module>?ref=<branch|tag>".')
 @click.option('--tf_version', help='Terraform version.')
 @click.option('--name', help='Helm chart name.')
 @click.option('--version', help='Helm chart version.')
 @click.option('--app_version', help='Helm chart application version.')
 @click.option('--output_dir', help='Path to the Helm chart output directory.')
-def main(tf_module, tf_module_version, tf_version, name, version, app_version, output_dir, tf_module_url):
+def main(tf_module_path, tf_module_url, tf_version, name, version, app_version, output_dir):
     """tf2helm converts a Terraform module to a Helm Chart [currently only supports the Terraform Operator]"""
     tf_config = {}
-    tf_config['tf_module_version'] = tf_module_version
     tf_config['tf_version'] = tf_version
 
     try:
         spinner.start('Download Terraform module')
         time.sleep(1)
-        if tf_module.startswith('https://'):
-            tf_config['tf_module'] = tf_module
-            tf_module = filehandler.download_tf_module(
-                tf_module, tf_module_version, '.modules')
-            tf_module = '.modules/' + tf_module
-        elif not tf_module.startswith('https://'):
+        if tf_module_url:
             tf_config['tf_module'] = tf_module_url
+            tf_module = filehandler.download_tf_module(
+                tf_module_url, '.modules')
+            tf_module = '.modules/' + tf_module
+        elif tf_module_path:
+            tf_config['tf_module'] = None
+            tf_module = tf_module_path
         spinner.succeed()
         spinner.start('Translate Terraform module')
         time.sleep(1)
