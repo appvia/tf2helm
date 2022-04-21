@@ -35,7 +35,7 @@ def copy_file(source, destination):
     shutil.copy2(source, destination)
 
 
-def download_tf_module(module, version, output_dir):
+def download_tf_module(module, output_dir):
     """
     Assumes source code is stored Git.
     Downloads it as a zip file and unzips it in a specified directory.
@@ -44,12 +44,9 @@ def download_tf_module(module, version, output_dir):
         version: terraform module version
         output_dir: an absolute or relative path to where the terraform module will be stored
     """
-    if module.endswith('/'):
-        module.strip('/')
-    if not version.startswith('v'):
-        version = 'v' + version
-    url = module + '/archive/refs/tags/' + version + '.zip'
-    response = requests.get(module + '/archive/refs/tags/' + version + '.zip')
+    url = module.split('?')[0]
+    version = module.split('?')[1].split('=')[1]
+    response = requests.get(url + '/archive/refs/tags/' + version + '.zip')
     archive = zipfile.ZipFile(BytesIO(response.content))
     archive.extractall(output_dir)
     return archive.namelist()[0]
