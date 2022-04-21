@@ -3,9 +3,8 @@
 import os
 import shutil
 import requests
-import zipfile
 from jinja2 import Environment, FileSystemLoader
-from io import BytesIO
+from git import Repo
 
 
 def render_template(filename, config, tf_config, chart_filename):
@@ -38,15 +37,17 @@ def copy_file(source, destination):
 def download_tf_module(module, output_dir):
     """
     Assumes source code is stored Git.
-    Downloads it as a zip file and unzips it in a specified directory.
+    Clones your Git repository into a specified directory.
     Arguments:
         module: terraform module URL
-        version: terraform module version
         output_dir: an absolute or relative path to where the terraform module will be stored
     """
-    url = module.split('?')[0]
-    version = module.split('?')[1].split('=')[1]
-    response = requests.get(url + '/archive/refs/tags/' + version + '.zip')
-    archive = zipfile.ZipFile(BytesIO(response.content))
-    archive.extractall(output_dir)
-    return archive.namelist()[0]
+    repo_url = module.split('?')[0]
+    repo_name = repo_url.split('/')[-1].split('.')[0]
+    if len(module.split('?')) > 1:
+        ref = module.split('?')[1].split('=')[1]
+        repo = Repo.clone_from(repo_url, output_dir + '/' + repo_name)
+        repo.git.checkout(ref)
+    else:
+        Repo.clone_from(repo_url, output_dir + '/' + repo_name)
+    return repo_name

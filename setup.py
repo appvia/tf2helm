@@ -16,7 +16,7 @@ setup(
     author_email = 'yassine.jaffoo@jaffoosolutions.com',
     url = 'https://github.com/appvia/tf2helm',
     py_modules = ['tf2helm', 'tfparser', 'filehandler'],
-    install_requires = ['python-hcl2', 'avionix', 'requests', 'jinja2', 'halo', 'click'],
+    install_requires = ['python-hcl2', 'avionix', 'requests', 'jinja2', 'halo', 'click', 'gitpython'],
     keywords = ['terraform', 'helm', 'kubernetes', 'self-service', 'cloud', 'aws', 'azure', 'gcp'],
     classifiers = [
         "Development Status :: 3 - Alpha",

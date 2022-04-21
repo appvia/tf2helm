@@ -15,8 +15,8 @@ spinner = Halo(spinner='dots')
 
 
 @click.command(no_args_is_help=True)
-@click.option('--tf_module_path', default=None, help='Terraform module local Path as "/local/path/to/module".')
-@click.option('--tf_module_url', default=None, help='Terraform module URL as "https://github.com/<org>/<module>?ref=<tag>".')
+@click.option('--tf_module_path', default=None, help='Terraform module local Path e.g. "/local/path/to/module".')
+@click.option('--tf_module_url', default=None, help='Terraform module URL e.g. "https://github.com/<org>/<module>?ref=<branch|tag>".')
 @click.option('--tf_version', help='Terraform version.')
 @click.option('--name', help='Helm chart name.')
 @click.option('--version', help='Helm chart version.')
