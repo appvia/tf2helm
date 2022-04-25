@@ -18,11 +18,12 @@ spinner = Halo(spinner='dots')
 @click.option('--tf_module_path', default=None, help='Terraform module local Path e.g. "/local/path/to/module".')
 @click.option('--tf_module_url', default=None, help='Terraform module URL e.g. "https://github.com/<org>/<module>?ref=<branch|tag>".')
 @click.option('--tf_version', help='Terraform version.')
+@click.option('--template', default='isaaguilar', help='Template to generate the custom resource definition. (isaaguilar, terraform-controller, 'oam-terraform-controller')')
 @click.option('--name', help='Helm chart name.')
 @click.option('--version', help='Helm chart version.')
 @click.option('--app_version', help='Helm chart application version.')
 @click.option('--output_dir', help='Path to the Helm chart output directory.')
-def main(tf_module_path, tf_module_url, tf_version, name, version, app_version, output_dir):
+def main(tf_module_path, tf_module_url, tf_version, name, version, app_version, output_dir, template):
     """tf2helm converts a Terraform module to a Helm Chart [currently only supports the Terraform Operator]"""
     tf_config = {}
     tf_config['tf_version'] = tf_version
@@ -53,7 +54,7 @@ def main(tf_module_path, tf_module_url, tf_version, name, version, app_version, 
         spinner.succeed()
         spinner.start('Update Helm Chart with Terraform Custom Resource')
         time.sleep(1)
-        filehandler.render_template('tf_operator.yaml.j2', tf_vars, tf_config,
+        filehandler.render_template(template + '.yaml.j2', tf_vars, tf_config,
                                     output_dir + '/' + name + '/templates/' + name + '.yaml')
         tpl = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "files", "_helpers.tpl")

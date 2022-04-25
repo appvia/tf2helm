@@ -1,0 +1,23 @@
+apiVersion: terraform.core.oam.dev/v1beta1
+kind: Configuration
+metadata:
+  name: {{'{{ .Release.Name }}'}}
+  labels:
+    {{'{{- include "custom-resource.labels" . | nindent 4 }}'}}
+spec:
+  remote: {{ tf_config['tf_module'] }}
+  providerRef: {}
+  writeConnectionSecretToRef:
+    name: "{{'{{ .Release.Name }}'}}-outputs"
+
+  variable:
+{%- for k in config['required'] %}
+{%- set name = k %}
+{%- set value = "toYaml .Values.required." + k + " | nindent 4" %}
+    {{ name }}: {{ ' {{' }} {{ value }} {{ '}}' }}
+{%- endfor %}
+{%- for k in config['optional'] %}
+{%- set name = k %}
+{%- set value = "toYaml .Values.optional." + k + " | nindent 4" %}
+    {{ name }}: {{- ' {{' }} {{ value }} {{ '}}' }}
+{%- endfor %}
