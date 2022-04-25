@@ -26,9 +26,12 @@ Options:
   --tf_module_url TEXT   Terraform module URL e.g.
                          "https://github.com/<org>/<module>?ref=<branch|tag>".
   --tf_version TEXT      Terraform version.
+  --template TEXT        Template to generate the custom resource definition.
+                         (isaaguilar, terraform-controller, oam-terraform-
+                         controller)
   --name TEXT            Helm chart name.
   --version TEXT         Helm chart version.
   --app_version TEXT     Helm chart application version.
   --output_dir TEXT      Path to the Helm chart output directory.
-  --help                 Show this message and exit
+  --help                 Show this message and exit.
 ```
