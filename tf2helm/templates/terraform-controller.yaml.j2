@@ -1,0 +1,23 @@
+apiVersion: terraform.appvia.com/v1alpha1
+kind: Configuration
+metadata:
+  name: {{'{{ .Release.Name }}'}}
+  labels:
+    {{'{{- include "custom-resource.labels" . | nindent 4 }}'}}
+spec:
+  module: {{ tf_config['tf_module'] }}
+  providerRef: {}
+  writeConnectionSecretToRef:
+    name: "{{'{{ .Release.Name }}'}}-outputs"
+
+  variables:
+{%- for k in config['required'] %}
+{%- set name = k %}
+{%- set value = "toYaml .Values.required." + k + " | nindent 4" %}
+    {{ name }}: {{ ' {{' }} {{ value }} {{ '}}' }}
+{%- endfor %}
+{%- for k in config['optional'] %}
+{%- set name = k %}
+{%- set value = "toYaml .Values.optional." + k + " | nindent 4" %}
+    {{ name }}: {{- ' {{' }} {{ value }} {{ '}}' }}
+{%- endfor %}
