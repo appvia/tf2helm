@@ -44,10 +44,13 @@ def download_tf_module(module, output_dir, env=None):
     """
     repo_url = module.split('?')[0]
     repo_name = repo_url.split('/')[-1].split('.')[0]
+    output_dir = output_dir + '/' + repo_name
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
     if len(module.split('?')) > 1:
         ref = module.split('?')[1].split('=')[1]
-        repo = Repo.clone_from(repo_url, output_dir + '/' + repo_name, env=env)
+        repo = Repo.clone_from(repo_url, output_dir, env=env)
         repo.git.checkout(ref)
     else:
-        Repo.clone_from(repo_url, output_dir + '/' + repo_name, env=env)
+        Repo.clone_from(repo_url, output_dir, env=env)
     return repo_name
