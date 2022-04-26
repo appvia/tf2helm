@@ -23,6 +23,11 @@ spec:
   - name: {{ name }}
     value: {{ '{{' }} {{ value }} {{ '}}' }}
 {%- endfor %}
+{%- if 'git_repo' in tf_config %}
+  scmAuthMethods:
+  - git: {}
+    host: {{ tf_config['git_repo'] }}
+  {%- endif %}
   outputsSecret: "{{'{{ .Release.Name }}'}}-outputs"
   customBackend: |-
     terraform {

@@ -18,28 +18,36 @@ spinner = Halo(spinner='dots')
 @click.option('--tf_module_path', default=None, help='Terraform module local Path e.g. "/local/path/to/module".')
 @click.option('--tf_module_url', default=None, help='Terraform module URL e.g. "https://github.com/<org>/<module>?ref=<branch|tag>".')
 @click.option('--tf_version', help='Terraform version.')
+@click.option('--git_auth', help='Git access token or SSH private key to use with a private repository.')
 @click.option('--template', default='isaaguilar', help='Template to generate the custom resource definition. (isaaguilar, terraform-controller, oam-terraform-controller)')
 @click.option('--name', help='Helm chart name.')
 @click.option('--version', help='Helm chart version.')
 @click.option('--app_version', help='Helm chart application version.')
 @click.option('--output_dir', help='Path to the Helm chart output directory.')
-def main(tf_module_path, tf_module_url, tf_version, name, version, app_version, output_dir, template):
+def main(tf_module_path, tf_module_url, tf_version, git_auth, name, version, app_version, output_dir, template):
     """tf2helm converts a Terraform module to a Helm Chart [currently only supports the Terraform Operator]"""
     tf_config = {}
     tf_config['tf_version'] = tf_version
 
     try:
-        spinner.start('Download Terraform module')
-        time.sleep(1)
         if tf_module_url:
+            spinner.start('Download Terraform module')
+            time.sleep(1)
+            if git_auth:
+                tf_config['git_repo'] = tf_module_url.split('?')[0]
+                if os.path.isfile(os.path.expanduser(git_auth)) and tf_module_url.startswith('git'):
+                    tf_module = filehandler.download_tf_module(tf_module_url, '.modules', env={'GIT_SSH_COMMAND':'ssh -i %s' % git_auth})
+                elif not os.path.isfile(os.path.expanduser(git_auth)) and tf_module_url.startswith('https'):
+                    url = 'https://' + git_auth + ':' + 'x-oauth-basic@' + tf_module_url.split('https://')[1]
+                    tf_module = filehandler.download_tf_module(url, '.modules')
+            else:
+                tf_module = filehandler.download_tf_module(tf_module_url, '.modules')
             tf_config['tf_module'] = tf_module_url
-            tf_module = filehandler.download_tf_module(
-                tf_module_url, '.modules')
             tf_module = '.modules/' + tf_module
+            spinner.succeed()
         elif tf_module_path:
             tf_config['tf_module'] = None
             tf_module = tf_module_path
-        spinner.succeed()
         spinner.start('Translate Terraform module')
         time.sleep(1)
         tf_vars = tfparser.get_tf_vars(tf_module)
