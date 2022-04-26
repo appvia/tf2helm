@@ -40,8 +40,8 @@ def main(tf_module_path, tf_module_url, tf_version, git_auth, name, version, app
                 elif not os.path.isfile(os.path.expanduser(git_auth)) and tf_module_url.startswith('https'):
                     url = 'https://' + git_auth + ':' + 'x-oauth-basic@' + tf_module_url.split('https://')[1]
                     tf_module = filehandler.download_tf_module(url, '.modules')
-                else:
-                    tf_module = filehandler.download_tf_module(tf_module_url, '.modules')
+            else:
+                tf_module = filehandler.download_tf_module(tf_module_url, '.modules')
             tf_config['tf_module'] = tf_module_url
             tf_module = '.modules/' + tf_module
         elif tf_module_path:
