@@ -30,9 +30,9 @@ def main(tf_module_path, tf_module_url, tf_version, git_auth, name, version, app
     tf_config['tf_version'] = tf_version
 
     try:
-        spinner.start('Download Terraform module')
-        time.sleep(1)
         if tf_module_url:
+            spinner.start('Download Terraform module')
+            time.sleep(1)
             if git_auth:
                 tf_config['git_repo'] = tf_module_url.split('?')[0]
                 if os.path.isfile(os.path.expanduser(git_auth)) and tf_module_url.startswith('git'):
@@ -44,10 +44,10 @@ def main(tf_module_path, tf_module_url, tf_version, git_auth, name, version, app
                 tf_module = filehandler.download_tf_module(tf_module_url, '.modules')
             tf_config['tf_module'] = tf_module_url
             tf_module = '.modules/' + tf_module
+            spinner.succeed()
         elif tf_module_path:
             tf_config['tf_module'] = None
             tf_module = tf_module_path
-        spinner.succeed()
         spinner.start('Translate Terraform module')
         time.sleep(1)
         tf_vars = tfparser.get_tf_vars(tf_module)
