@@ -16,26 +16,7 @@ pip install tf2helm
 ```
 
 ## Usage
+
 ```
-tf2helm
-Usage: tf2helm [OPTIONS]
-
-  tf2helm converts a Terraform module to a Helm Chart
-
-Options:
-  --tf_module_path TEXT  Terraform module local Path e.g.
-                         "/local/path/to/module".
-  --tf_module_url TEXT   Terraform module URL e.g.
-                         "https://github.com/<org>/<module>?ref=<branch|tag>".
-  --tf_version TEXT      Terraform version.
-  --git_auth TEXT        Git access token or SSH private key to use with a
-                         private repository.
-  --template TEXT        Template to generate the custom resource definition.
-                         (isaaguilar, terraform-controller, oam-terraform-
-                         controller)
-  --name TEXT            Helm chart name.
-  --version TEXT         Helm chart version.
-  --app_version TEXT     Helm chart application version.
-  --output_dir TEXT      Path to the Helm chart output directory.
-  --help                 Show this message and exit.
+tf2helm --help
 ```
