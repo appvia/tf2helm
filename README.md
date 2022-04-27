@@ -26,7 +26,6 @@ Options:
   --tf_module_path TEXT  Terraform module local Path e.g.
                          "/local/path/to/module".
   --tf_module_url TEXT   Terraform module URL e.g.
-
                          "https://github.com/<org>/<module>?ref=<branch|tag>".
   --tf_version TEXT      Terraform version.
   --git_auth TEXT        Git access token or SSH private key to use with a
