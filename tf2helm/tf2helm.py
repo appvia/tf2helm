@@ -25,7 +25,7 @@ spinner = Halo(spinner='dots')
 @click.option('--app_version', help='Helm chart application version.')
 @click.option('--output_dir', help='Path to the Helm chart output directory.')
 def main(tf_module_path, tf_module_url, tf_version, git_auth, name, version, app_version, output_dir, template):
-    """tf2helm converts a Terraform module to a Helm Chart [currently only supports the Terraform Operator]"""
+    """tf2helm converts a Terraform module to a Helm Chart"""
     tf_config = {}
     tf_config['tf_version'] = tf_version
 

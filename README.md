@@ -20,8 +20,7 @@ pip install tf2helm
 tf2helm
 Usage: tf2helm [OPTIONS]
 
-  tf2helm converts a Terraform module to a Helm Chart [currently only supports
-  the Terraform Operator]
+  tf2helm converts a Terraform module to a Helm Chart
 
 Options:
   --tf_module_path TEXT  Terraform module local Path e.g.
