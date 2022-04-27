@@ -9,7 +9,7 @@ setup(
     name = 'tf2helm',
     packages = ['tf2helm'],
     version = '0.0.7',
-    description = 'tf2helm converts a Terraform module to a Helm Chart [currently only supports the Terraform Operator]',
+    description = 'tf2helm converts a Terraform module to a Helm Chart',
     long_description = long_description,
     long_description_content_type = 'text/markdown',
     author = 'Mohammud Yassine Jaffoo',
