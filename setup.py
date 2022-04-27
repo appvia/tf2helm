@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
+from pathlib import Path
 
-
-with open("README.md", "r", encoding="utf-8") as f:
-    long_description = f.read()
+directory = Path(__file__).parent
+long_description = (directory / "README.md").read_text()
 
 setup(
     name='tf2helm',
     packages=['tf2helm'],
-    version='0.0.11',
+    version='0.0.12',
     description='tf2helm converts a Terraform module to a Helm Chart',
     long_description=long_description,
     long_description_content_type='text/markdown',
