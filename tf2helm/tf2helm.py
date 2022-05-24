@@ -6,6 +6,7 @@ import yaml
 import os
 import time
 import click
+import pkg_resources
 from avionix import ChartBuilder, ChartInfo, Values
 from avionix.kube.base_objects import KubernetesBaseObject
 from halo import Halo
@@ -21,11 +22,10 @@ spinner = Halo(spinner='dots')
 @click.option('--git_auth', help='Git access token or SSH private key to use with a private repository.')
 @click.option('--template', default='isaaguilar', help='Template to generate the custom resource definition. (isaaguilar, terraform-controller, oam-terraform-controller)')
 @click.option('--name', help='Helm chart name.')
-@click.option('--version', help='Helm chart version.')
 @click.option('--app_version', help='Helm chart application version.')
 @click.option('--output_dir', help='Path to the Helm chart output directory.')
 @click.version_option()
-def main(tf_module_path, tf_module_url, tf_version, git_auth, name, version, app_version, output_dir, template):
+def main(tf_module_path, tf_module_url, tf_version, git_auth, name, app_version, output_dir, template):
     """tf2helm converts a Terraform module to a Helm Chart"""
     tf_config = {}
     tf_config['tf_version'] = tf_version
@@ -56,6 +56,7 @@ def main(tf_module_path, tf_module_url, tf_version, git_auth, name, version, app
         spinner.start('Create Helm Chart')
         time.sleep(1)
         values = Values(tf_vars)
+        version = pkg_resources.require((__name__).split('.')[0])[0].version
         builder = ChartBuilder(ChartInfo(api_version="v2", name=name,
                                version=version, app_version=app_version), [], values=values,
                                output_directory=output_dir)

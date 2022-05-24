@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 setup(
     name='tf2helm',
     packages=['tf2helm'],
-    version='0.0.16',
+    version='0.0.17',
     description='tf2helm converts a Terraform module to a Helm Chart',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -33,7 +33,7 @@ setup(
         "Topic :: Text Processing",
     ],
     include_package_data=True,
-    package_data={'tf2helm': ['templates/*.j2', 'files/*.tpl']},
+    package_data={"": ["*.j2", "*.tpl"]},
     entry_points='''
         [console_scripts]
         tf2helm=tf2helm.tf2helm:main
