@@ -1,0 +1,19 @@
+name: Build Python 🐍 distributions 📦
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build Python 🐍 source distributions 📦
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Create source distribution
+      run: python setup.py sdist
