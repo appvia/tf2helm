@@ -33,7 +33,6 @@ setup(
         "Topic :: Text Processing",
     ],
     include_package_data=True,
-    package_data={'tf2helm': ['templates/*.j2', 'files/*.tpl']},
     entry_points='''
         [console_scripts]
         tf2helm=tf2helm.tf2helm:main
