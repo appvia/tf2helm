@@ -2,3 +2,4 @@
 **/.modules/*
 tf2helm.egg-info/*
 dist/*
+build/*
