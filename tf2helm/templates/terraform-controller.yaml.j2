@@ -1,4 +1,4 @@
-apiVersion: terraform.appvia.com/v1alpha1
+apiVersion: terraform.appvia.io/v1alpha1
 kind: Configuration
 metadata:
   name: {{'{{ .Release.Name }}'}}
@@ -6,18 +6,27 @@ metadata:
     {{'{{- include "custom-resource.labels" . | nindent 4 }}'}}
 spec:
   module: {{ tf_config['tf_module'] }}
-  providerRef: {}
+  enableAutoApproval: {{'{{ .Values.required.enable_auto_approval }}'}}
+  providerRef:
+    name: {{'{{ .Values.required.provider_ref }}'}}
   writeConnectionSecretToRef:
     name: "{{'{{ .Release.Name }}'}}-outputs"
-
   variables:
-{%- for k in config['required'] %}
+{%- for k, v in config['required'].items() %}
 {%- set name = k %}
-{%- set value = "toYaml .Values.required." + k + " | nindent 4" %}
-    {{ name }}: {{ ' {{' }} {{ value }} {{ '}}' }}
+{%- if v is iterable and (v is not string) %}
+{%- set value = "toYaml .Values.required." + k + " | nindent 6" %}
+{%- else %}
+{%- set value = "toYaml .Values.required." + k %}
+{%- endif %}
+    {{ name }}: {{ '{{' }} {{ value }} {{ '}}' }}
 {%- endfor %}
-{%- for k in config['optional'] %}
+{%- for k, v in config['optional'].items() %}
 {%- set name = k %}
-{%- set value = "toYaml .Values.optional." + k + " | nindent 4" %}
+{%- if v is iterable and (v is not string) %}
+{%- set value = "toYaml .Values.optional." + k + " | nindent 6" %}
+{%- else %}
+{%- set value = "toYaml .Values.optional." + k %}
+{%- endif %}
     {{ name }}: {{- ' {{' }} {{ value }} {{ '}}' }}
 {%- endfor %}

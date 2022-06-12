@@ -48,6 +48,15 @@ def does_tf_var_have_a_val(module, variable):
                 if k == variable:
                     return v
 
+def get_var_type(var_type):
+    if var_type.startswith('${string'):
+        v = ""
+    elif var_type.startswith('${map'):
+        v = {}
+    elif var_type.startswith('${list'):
+        v = []
+    return v
+
 
 def get_tf_vars(module):
     """
@@ -73,7 +82,9 @@ def get_tf_vars(module):
                         else:
                             v = does_tf_var_have_a_val(module, k)
                             if v is None:
-                                tf_vars['required'][k] = ""
+                                var_type = var[k]['type']
+                                v = get_var_type(var_type)
+                                tf_vars['required'][k] = v
                             else:
                                 tf_vars['optional'][k] = v
     return tf_vars
