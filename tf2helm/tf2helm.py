@@ -16,14 +16,14 @@ spinner = Halo(spinner='dots')
 
 
 @click.command(no_args_is_help=True)
-@click.option('--tf_module_path', default=None, help='Terraform module local Path e.g. "/local/path/to/module".')
-@click.option('--tf_module_url', default=None, help='Terraform module URL e.g. "https://github.com/<org>/<module>?ref=<branch|tag>".')
-@click.option('--tf_version', help='Terraform version.')
-@click.option('--git_auth', help='Git access token or SSH private key to use with a private repository.')
+@click.option('--tf-module-path', default=None, help='Terraform module local Path e.g. "/local/path/to/module".')
+@click.option('--tf-module-url', default=None, help='Terraform module URL e.g. "https://github.com/<org>/<module>?ref=<branch|tag>".')
+@click.option('--tf-version', help='Terraform version.')
+@click.option('--git-auth', help='Git access token or SSH private key to use with a private repository.')
 @click.option('--template', default='terraform-controller', show_default=True, help='Template to generate the custom resource definition. (terraform-controller, isaaguilar, oam-terraform-controller)')
 @click.option('--name', help='Helm chart name.')
-@click.option('--app_version', help='Helm chart application version.')
-@click.option('--output_dir', help='Path to the Helm chart output directory.')
+@click.option('--app-version', help='Helm chart application version.')
+@click.option('--output-dir', help='Path to the Helm chart output directory.')
 @click.version_option()
 def main(tf_module_path, tf_module_url, tf_version, git_auth, name, app_version, output_dir, template):
     """tf2helm converts a Terraform module to a Helm Chart"""
@@ -55,6 +55,9 @@ def main(tf_module_path, tf_module_url, tf_version, git_auth, name, app_version,
         spinner.succeed()
         spinner.start('Create Helm Chart')
         time.sleep(1)
+        if template == "terraform-controller":
+            tf_vars['required']['provider_ref'] = ""
+            tf_vars['required']['enable_auto_approval'] = ""
         values = Values(tf_vars)
         version = pkg_resources.require((__name__).split('.')[0])[0].version
         builder = ChartBuilder(ChartInfo(api_version="v2", name=name,
